@@ -2,18 +2,18 @@
 #include "FileSave.h"
 
 //------------------------------------------------------------------------------
-// ´æÎÄ¼şÏß³Ì
+// å­˜æ–‡ä»¶çº¿ç¨‹
 UINT FileSaveThread(LPVOID pParam)
 {
 	FileSave *filesave = (FileSave*)pParam;
 
-	filesave->SetThreadExit(false);	                                        // Ïß³ÌÍË³ö±êÖ¾ÖÃFALSE
+	filesave->SetThreadExit(false);	                                        // çº¿ç¨‹é€€å‡ºæ ‡å¿—ç½®FALSE
 	// g_WriteFileLength = 0;
 	while(filesave->GetThreadRunStatus())  
 	{
 		DataPak pDataPak;
 
-		int SaveData = filesave->GetDataFromTeam(&pDataPak);	// ÓĞÊı¾İÊ±·µ»Ø1
+		int SaveData = filesave->GetDataFromTeam(&pDataPak);	// æœ‰æ•°æ®æ—¶è¿”å›1
 
 		if(SaveData>0)					
 		{
@@ -21,17 +21,17 @@ UINT FileSaveThread(LPVOID pParam)
 		}
 		else
 		{
-			// ¶ÓÁĞÎª¿ÕÊ±µÈ´ı
+			// é˜Ÿåˆ—ä¸ºç©ºæ—¶ç­‰å¾…
 			Sleep(10);
 		}
 	}
-	filesave->SetThreadExit(true);	 		// Ïß³ÌÍË³ö±êÖ¾ÖÃTRUE
+	filesave->SetThreadExit(true);	 		// çº¿ç¨‹é€€å‡ºæ ‡å¿—ç½®TRUE
 
 	return 0;
 }
 
 //------------------------------------------------------------------------------
-// »ñÈ¡exeÎÄ¼şÂ·¾¶º¯Êı
+// è·å–exeæ–‡ä»¶è·¯å¾„å‡½æ•°
 CString GetModuleFilePath_class()
 {
 	TCHAR ModuleFileName[MAX_PATH];
@@ -40,7 +40,7 @@ CString GetModuleFilePath_class()
 	TCHAR dir[_MAX_DIR];
 	TCHAR fname[_MAX_FNAME];
 	TCHAR ext[_MAX_EXT];
-	//·Ö¸îÍêÕûÂ·¾¶Ãû
+	//åˆ†å‰²å®Œæ•´è·¯å¾„å
 	_tsplitpath_s(ModuleFileName,drive,dir,fname,ext);
 	CString FilePath;
 	FilePath.Format(_T("%s\\%s"), drive , dir);
@@ -48,7 +48,7 @@ CString GetModuleFilePath_class()
 }
 
 
-// Ñ¡ÔñÎÄ¼şÂ·¾¶
+// é€‰æ‹©æ–‡ä»¶è·¯å¾„
 int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)   
 {   
 	switch(uMsg)
@@ -57,7 +57,7 @@ int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpDa
 		{		
 			USES_CONVERSION;
 			char * pFileName = T2A(GetModuleFilePath_class()); 
-			// strcpy(oldFilePath,GetModuleFilePath_class());//³õÊ¼È±Ê¡ÎÄ¼ş¼ĞÃû
+			// strcpy(oldFilePath,GetModuleFilePath_class());//åˆå§‹ç¼ºçœæ–‡ä»¶å¤¹å
 			::SendMessage(hwnd,BFFM_SETSELECTION,TRUE,(LPARAM)&pFileName);   
 		}
 
@@ -77,7 +77,7 @@ int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpDa
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-// Êı¾İ´æÎÄ¼ş¶ÓÁĞ³õÊ¼»¯
+// æ•°æ®å­˜æ–‡ä»¶é˜Ÿåˆ—åˆå§‹åŒ–
 void FileSave::InitSaveDataTeam()
 {
 	m_SaveDataTeamIn = m_SaveDataTeamOut = m_SaveDataTeam;
@@ -89,7 +89,7 @@ void FileSave::InitSaveDataTeam()
 }
 
 //------------------------------------------------------------------------------
-// ÅĞ¶Ï¶ÓÁĞÊÇ·ñÂú
+// åˆ¤æ–­é˜Ÿåˆ—æ˜¯å¦æ»¡
 int FileSave::SaveDataTeamFull()
 {
 	int nItems;
@@ -106,36 +106,36 @@ int FileSave::SaveDataTeamFull()
 
 
 //------------------------------------------------------------------------------
-// ²åÈëÊı¾İ´æÎÄ¼ş¶ÓÁĞ
-// ¶ÓÁĞÂúÊ± bWaitÎªTrue µÈ´ı£¬bWaitÎªfalse ²»µÈ´ı·µ»Ø´íÎó
+// æ’å…¥æ•°æ®å­˜æ–‡ä»¶é˜Ÿåˆ—
+// é˜Ÿåˆ—æ»¡æ—¶ bWaitä¸ºTrue ç­‰å¾…ï¼ŒbWaitä¸ºfalse ä¸ç­‰å¾…è¿”å›é”™è¯¯
 int FileSave::InsertSaveDataToTeam(BYTE* data,int len, BOOL bWait)
 {
-	m_InsSaveDataCriSec.Lock();										// Ê¹ÓÃÁÙ½çÇø¼ÓËø
+	m_InsSaveDataCriSec.Lock();										// ä½¿ç”¨ä¸´ç•ŒåŒºåŠ é”
 
-	if(bWait)// ¶ÓÁĞÂúÊ±µÈ´ı
+	if(bWait)// é˜Ÿåˆ—æ»¡æ—¶ç­‰å¾…
 	{
 		m_PopSaveDataCriSec.Lock();
 
-		while(SaveDataTeamFull() && m_FileSaveThreadRun)				// µ±TÏß³ÌĞèÒªÍ£Ö¹Ê±£¬´Ë´¦Ó¦·ÅÆú¼ÌĞøĞ´Êı¾İ£»
+		while(SaveDataTeamFull() && m_FileSaveThreadRun)				// å½“Tçº¿ç¨‹éœ€è¦åœæ­¢æ—¶ï¼Œæ­¤å¤„åº”æ”¾å¼ƒç»§ç»­å†™æ•°æ®ï¼›
 		{
 			if(m_SaveDataTeamOut == (m_SaveDataTeam + MAX_FILE_TEAM - 1))
 				m_SaveDataTeamOut = m_SaveDataTeam;
 			else
 				m_SaveDataTeamOut++;
 		}
-
+		Sleep(10);
 		m_PopSaveDataCriSec.Unlock();
 	}
-	else// ¶ÓÁĞÂúÊ±·µ»Ø´íÎó
+	else// é˜Ÿåˆ—æ»¡æ—¶è¿”å›é”™è¯¯
 	{
 		if(SaveDataTeamFull())
 		{
-			m_InsSaveDataCriSec.Unlock();								// ½âËø
+			m_InsSaveDataCriSec.Unlock();								// è§£é”
 			return -1;
 		}
 	}
 
-	// Èë¶ÓÁĞ
+	// å…¥é˜Ÿåˆ—
 	m_SaveDataTeamIn->dataLen = len;
 	m_SaveDataTeamIn->data = new BYTE[len];
 	memcpy(m_SaveDataTeamIn->data, data, len);
@@ -145,27 +145,27 @@ int FileSave::InsertSaveDataToTeam(BYTE* data,int len, BOOL bWait)
 	else
 		m_SaveDataTeamIn++;
 
-	m_InsSaveDataCriSec.Unlock();										// ½âËø
+	m_InsSaveDataCriSec.Unlock();										// è§£é”
 
 	return 0;
 }
 
 //------------------------------------------------------------------------------
-// ¼ñ³öÊı¾İ¶ÓÁĞ
-// ÓĞÊı¾İÊ±·µ»Ø1
+// æ¡å‡ºæ•°æ®é˜Ÿåˆ—
+// æœ‰æ•°æ®æ—¶è¿”å›1
 int FileSave::PickOutSaveDataFromTeam(DataPak *datapack)
 {	
 	
 	if(m_SaveDataTeamIn != m_SaveDataTeamOut)
 	{
 		m_PopSaveDataCriSec.Lock();
-		// ³ö¶ÓÁĞ
+		// å‡ºé˜Ÿåˆ—
 		datapack->dataLen = m_SaveDataTeamOut->dataLen;
 		datapack->data = new BYTE[datapack->dataLen];
 		memcpy(datapack->data, m_SaveDataTeamOut->data, datapack->dataLen);
 		m_SaveDataTeamOut->dataLen = 0;
 		delete m_SaveDataTeamOut->data;
-		// ÏÂ´Î³öÊı¾İÎ»ÖÃÔö¼Ó
+		// ä¸‹æ¬¡å‡ºæ•°æ®ä½ç½®å¢åŠ 
 		if(m_SaveDataTeamOut == (m_SaveDataTeam + MAX_FILE_TEAM - 1))
 			m_SaveDataTeamOut = m_SaveDataTeam;
 		else
@@ -176,7 +176,7 @@ int FileSave::PickOutSaveDataFromTeam(DataPak *datapack)
 	return 0;
 }
 
-// ÊÍ·Å´æÎÄ¼ş¶ÓÁĞ¶¯Ì¬ÉêÇëµÄÄÚ´æ
+// é‡Šæ”¾å­˜æ–‡ä»¶é˜Ÿåˆ—åŠ¨æ€ç”³è¯·çš„å†…å­˜
 void FileSave::DeleteSaveDataTeam()
 {
 	for (int i = 0; i < MAX_FILE_TEAM; i++)
@@ -189,17 +189,17 @@ void FileSave::DeleteSaveDataTeam()
 }
 
 //------------------------------------------------------------------------------
-// Àà³ÉÔ±º¯Êı¶¨Òå
+// ç±»æˆå‘˜å‡½æ•°å®šä¹‰
 FileSave::FileSave()
 {
 	m_FileSaveOpen = false;
 	m_FileSaveThreadRun = false;
 	m_WriteFileSize = 0;
-	m_MaxFileSize = 1024*1024*1024; // Ä¬ÈÏ×î¶à´æ1GBÊı¾İ
+	m_MaxFileSize = 1024*1024*1024; // é»˜è®¤æœ€å¤šå­˜1GBæ•°æ®
 	InitDataSaveToFileThread();
 	InitSaveDataTeam();
 	m_filepath = _T("");
-	StartDataSaveToFileThread();	// ¿ªÆô´æÎÄ¼şÏß³Ì
+	StartDataSaveToFileThread();	// å¼€å¯å­˜æ–‡ä»¶çº¿ç¨‹
 }
 
 FileSave::~FileSave()
@@ -210,46 +210,46 @@ FileSave::~FileSave()
 		m_FileSaveOpen = false;
 	}
 	StopDataSaveToFileThread();
-	// ¼ÓÒ»¸öÇå¿Õ¶ÓÁĞµÄº¯Êı
+	// åŠ ä¸€ä¸ªæ¸…ç©ºé˜Ÿåˆ—çš„å‡½æ•°
 	DeleteSaveDataTeam();
 }
 
-// Í¨¹ı×Ö·û´®ÉèÖÃÎÄ¼şÂ·¾¶
+// é€šè¿‡å­—ç¬¦ä¸²è®¾ç½®æ–‡ä»¶è·¯å¾„
 int FileSave::SetFilePath(CString str)
 {
 	m_filepath = str;
-	// ºóĞøÅĞ¶Ï´«ÈëµÄÂ·¾¶ÊÇ·ñÓĞĞ§
+	// åç»­åˆ¤æ–­ä¼ å…¥çš„è·¯å¾„æ˜¯å¦æœ‰æ•ˆ
 	return 0;
 }
 
-// Í¨¹ı¶Ô»°¿òÑ¡ÔñÎÄ¼şÂ·¾¶
+// é€šè¿‡å¯¹è¯æ¡†é€‰æ‹©æ–‡ä»¶è·¯å¾„
 int FileSave::SelectFilePath()
 {
 	if(0)
 	{
-		AfxMessageBox(_T("²»ÔÊĞí¸ü¸ÄÂ·¾¶£¡"));
+		AfxMessageBox(_T("ä¸å…è®¸æ›´æ”¹è·¯å¾„ï¼"));
 	}
 	else
 	{
 		BROWSEINFO bi;
 		TCHAR Buffer[1024];
-		//³õÊ¼»¯Èë¿Ú²ÎÊıbi¿ªÊ¼
+		//åˆå§‹åŒ–å…¥å£å‚æ•°biå¼€å§‹
 		bi.hwndOwner = NULL;
 		bi.pidlRoot = NULL;
-		bi.pszDisplayName = Buffer;//´Ë²ÎÊıÈçÎªNULLÔò²»ÄÜÏÔÊ¾¶Ô»°¿ò
-		bi.lpszTitle = _T("Ñ¡ÔñÎÄ¼ş¼Ğ");
+		bi.pszDisplayName = Buffer;//æ­¤å‚æ•°å¦‚ä¸ºNULLåˆ™ä¸èƒ½æ˜¾ç¤ºå¯¹è¯æ¡†
+		bi.lpszTitle = _T("é€‰æ‹©æ–‡ä»¶å¤¹");
 		bi.ulFlags = 0;
 		bi.lpfn = BrowseCallbackProc;
 		//bi.iImage=IDI_ICON2;
-		//³õÊ¼»¯Èë¿Ú²ÎÊıbi½áÊø
-		LPITEMIDLIST pIDList = SHBrowseForFolder(&bi);//µ÷ÓÃÏÔÊ¾Ñ¡Ôñ¶Ô»°¿ò
+		//åˆå§‹åŒ–å…¥å£å‚æ•°biç»“æŸ
+		LPITEMIDLIST pIDList = SHBrowseForFolder(&bi);//è°ƒç”¨æ˜¾ç¤ºé€‰æ‹©å¯¹è¯æ¡†
 		if(pIDList)
 		{
-			SHGetPathFromIDList(pIDList, Buffer);	//È¡µÃÎÄ¼ş¼ĞÂ·¾¶µ½BufferÀï
+			SHGetPathFromIDList(pIDList, Buffer);	//å–å¾—æ–‡ä»¶å¤¹è·¯å¾„åˆ°Bufferé‡Œ
 
-			CString DataDir = Buffer;	//½«Â·¾¶±£´æÔÚÒ»¸öCString¶ÔÏóÀï
+			CString DataDir = Buffer;	//å°†è·¯å¾„ä¿å­˜åœ¨ä¸€ä¸ªCStringå¯¹è±¡é‡Œ
 
-			// ÅĞ¶ÏËùÑ¡Â·¾¶ÊÇ·ñÓĞĞ§
+			// åˆ¤æ–­æ‰€é€‰è·¯å¾„æ˜¯å¦æœ‰æ•ˆ
 			if (DataDir != _T(""))
 			{
 				m_filepath = DataDir;
@@ -257,28 +257,28 @@ int FileSave::SelectFilePath()
 			else
 			{
 				CString csErr;
-				csErr.Format(_T("ËùÑ¡Â·¾¶ÎŞĞ§"));
-				AfxMessageBox(csErr);	            // µ¯´°ÌáÊ¾Éè±¸´ò¿ªÊ§°Ü
+				csErr.Format(_T("æ‰€é€‰è·¯å¾„æ— æ•ˆ"));
+				AfxMessageBox(csErr);	            // å¼¹çª—æç¤ºè®¾å¤‡æ‰“å¼€å¤±è´¥
 			}
 		}
 
 		LPMALLOC lpMalloc;
 		if(FAILED(SHGetMalloc(&lpMalloc))) return -1;
-		//ÊÍ·ÅÄÚ´æ
+		//é‡Šæ”¾å†…å­˜
 		lpMalloc->Free(pIDList);
 		lpMalloc->Release();
 	}
 	return 0;
 }
 
-// Ğ´Êı¾İµ½ÎÄ¼ş
+// å†™æ•°æ®åˆ°æ–‡ä»¶
 int FileSave::Write(BYTE* data,int len)
 {
-	// Ä¬ÈÏ²åÈëÊı¾İËÙ¶È´óÓÚ´æÎÄ¼şËÙ¶ÈÊ±µÈ´ı
+	// é»˜è®¤æ’å…¥æ•°æ®é€Ÿåº¦å¤§äºå­˜æ–‡ä»¶é€Ÿåº¦æ—¶ç­‰å¾…
 	return InsertSaveDataToTeam(data, len, 1);
 }
 
-// Ö¸¶¨ÎÄ¼ş×î´óÈİÁ¿
+// æŒ‡å®šæ–‡ä»¶æœ€å¤§å®¹é‡
 int FileSave::SetMaxFileSize(int size)
 {
 	if (!m_FileSaveOpen)
@@ -287,50 +287,50 @@ int FileSave::SetMaxFileSize(int size)
 		return 0;
 	}else{
 		CString csErr;
-		csErr.Format(_T("ÎÄ¼şÒÑ´ò¿ª£¬²»¿ÉĞŞ¸ÄÎÄ¼ş×î´óÈİÁ¿£¡"));
-		AfxMessageBox(csErr);	            // µ¯´°ÌáÊ¾Éè±¸´ò¿ªÊ§°Ü
+		csErr.Format(_T("æ–‡ä»¶å·²æ‰“å¼€ï¼Œä¸å¯ä¿®æ”¹æ–‡ä»¶æœ€å¤§å®¹é‡ï¼"));
+		AfxMessageBox(csErr);	            // å¼¹çª—æç¤ºè®¾å¤‡æ‰“å¼€å¤±è´¥
 		return -1;
 	}
 }
 
-// ´æÎÄ¼ş
+// å­˜æ–‡ä»¶
 int FileSave::Save(DataPak *pDataPak)
 {
-	// µ÷ÓÃSaveº¯ÊıÄ¬ÈÏ¿ªÆô´æÎÄ¼şÏß³Ì²¢¿ªÊ¼´æÎÄ¼ş
+	// è°ƒç”¨Saveå‡½æ•°é»˜è®¤å¼€å¯å­˜æ–‡ä»¶çº¿ç¨‹å¹¶å¼€å§‹å­˜æ–‡ä»¶
 	if (m_WriteFileSize + pDataPak->dataLen > m_MaxFileSize)
 	{
-		// Èç¹ûËùĞ´ÎÄ¼şÁ¿´óÓÚ×î´óÎÄ¼şÁ¿£¬ĞÂ½¨ÎÄ¼şÓÃÓÚ´æ´¢
+		// å¦‚æœæ‰€å†™æ–‡ä»¶é‡å¤§äºæœ€å¤§æ–‡ä»¶é‡ï¼Œæ–°å»ºæ–‡ä»¶ç”¨äºå­˜å‚¨
 		m_FileSaveOpen = false;
 	}
 	if (!m_FileSaveOpen)
 	{
-		// ÎÄ¼şÎ´´ò¿ªÊ±£¬´´½¨²¢´ò¿ªÎÄ¼ş
+		// æ–‡ä»¶æœªæ‰“å¼€æ—¶ï¼Œåˆ›å»ºå¹¶æ‰“å¼€æ–‡ä»¶
 		m_WriteFileSize = 0;
-		// »ñÈ¡ÏµÍ³Ê±¼ä
+		// è·å–ç³»ç»Ÿæ—¶é—´
 		SYSTEMTIME st;
 		GetLocalTime(&st);
 
 		m_filename.Format(_T("%s\\Chdata_%04d%02d%02d-%02d%02d%02d.dat"),
 			m_filepath, 
-			st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);  // ÎÄ¼şÃû¸ù¾İÊµ¼ÊÇé¿öĞŞ¸Ä
+			st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);  // æ–‡ä»¶åæ ¹æ®å®é™…æƒ…å†µä¿®æ”¹
 		m_FileSaveOpen = true;
 
-		// ´´½¨ÎÄ¼ş
+		// åˆ›å»ºæ–‡ä»¶
 		if (!m_file.Open(m_filename, CFile::modeCreate|CFile::modeReadWrite|CFile::modeNoTruncate))
 		{
-			AfxMessageBox(_T("ÎÄ¼ş´´½¨Ê§°Ü£¡"));
+			AfxMessageBox(_T("æ–‡ä»¶åˆ›å»ºå¤±è´¥ï¼"));
 			return 0;
 		}
 		
 	}
 
-	// ´æÎÄ¼ş
+	// å­˜æ–‡ä»¶
 	m_file.Write(pDataPak->data, pDataPak->dataLen);
 	delete pDataPak->data;
 	return 1;
 }
 
-// ¹Ø±Õ´æÎÄ¼ş
+// å…³é—­å­˜æ–‡ä»¶
 void FileSave::CloseFileSave()
 {
 	if(m_FileSaveOpen)
@@ -340,19 +340,19 @@ void FileSave::CloseFileSave()
 	}
 }
 
-// ÉèÖÃÏß³ÌÍË³ö±êÖ¾
+// è®¾ç½®çº¿ç¨‹é€€å‡ºæ ‡å¿—
 void FileSave::SetThreadExit(bool ex)
 {
 	m_FileSaveThreadExit = ex;
 }
 
-// »ñÈ¡Ïß³ÌÔËĞĞ±êÖ¾
+// è·å–çº¿ç¨‹è¿è¡Œæ ‡å¿—
 bool FileSave::GetThreadRunStatus()
 {
 	return m_FileSaveThreadRun;
 }
 
-// ´Ó¶ÓÁĞÈ¡³öÊı¾İ
+// ä»é˜Ÿåˆ—å–å‡ºæ•°æ®
 int FileSave::GetDataFromTeam(DataPak *datapack)
 {
 	return PickOutSaveDataFromTeam(datapack);
@@ -363,28 +363,28 @@ int FileSave::TreadSave(DataPak *pDataPak)
 	return Save(pDataPak);
 }
 
-// ³õÊ¼»¯´æÎÄ¼şÏß³Ìº¯Êı
+// åˆå§‹åŒ–å­˜æ–‡ä»¶çº¿ç¨‹å‡½æ•°
 void FileSave::InitDataSaveToFileThread()
 {
 	m_FileSaveThreadRun = FALSE;
 	m_FileSaveThreadExit = TRUE;
 }
 
-// Æô¶¯´æÎÄ¼şÏß³Ìº¯Êı
+// å¯åŠ¨å­˜æ–‡ä»¶çº¿ç¨‹å‡½æ•°
 void FileSave::StartDataSaveToFileThread()
 {
 	m_FileSaveThreadRun = TRUE;
 
-	// µÚ¶ş¸ö²ÎÊıÎª´«ÈëÏß³ÌµÄ²ÎÊı£¬ÀàĞÍÎªLPVOID
+	// ç¬¬äºŒä¸ªå‚æ•°ä¸ºä¼ å…¥çº¿ç¨‹çš„å‚æ•°ï¼Œç±»å‹ä¸ºLPVOID
 	AfxBeginThread(FileSaveThread, (LPVOID)this, THREAD_PRIORITY_NORMAL, 0, 0, NULL);
 }
 
-// Í£Ö¹´æÎÄ¼şÏß³Ìº¯Êı
+// åœæ­¢å­˜æ–‡ä»¶çº¿ç¨‹å‡½æ•°
 void FileSave::StopDataSaveToFileThread()
 {
 	m_FileSaveThreadRun = FALSE;
 
-	// µÈ´ıËùÓĞÖ÷Ïß³ÌÍË³ö
+	// ç­‰å¾…æ‰€æœ‰ä¸»çº¿ç¨‹é€€å‡º
 	while(!m_FileSaveThreadExit)
 		Sleep(10);
 }
